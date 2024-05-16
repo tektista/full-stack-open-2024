@@ -10,13 +10,20 @@ const AppButton = ({ name, onClick }) => {
 
 const Statistic = ({ name, count }) => {
   return name === "positive" ? (
-    <div>
-      {name} {count} {"%"}
-    </div>
+    <tr>
+      <td>{name}</td>{" "}
+      <td>
+        {count.toFixed(1)} {"%"}
+      </td>
+    </tr>
+  ) : name === "average" ? (
+    <tr>
+      <td>{name}</td> <td>{count.toFixed(1)}</td>
+    </tr>
   ) : (
-    <div>
-      {name} {count}
-    </div>
+    <tr>
+      <td>{name}</td> <td>{count}</td>
+    </tr>
   );
 };
 
@@ -103,12 +110,14 @@ const App = () => {
       <Header title={"statistics"} />
       {total > 0 ? (
         <>
-          <Statistic name={"good"} count={good} />
-          <Statistic name={"neutral"} count={neutral} />
-          <Statistic name={"bad"} count={bad} />
-          <Statistic name={"total"} count={total} />
-          <Statistic name={"average"} count={average} />
-          <Statistic name={"positive"} count={positive} />
+          <table>
+            <Statistic name={"good"} count={good} />
+            <Statistic name={"neutral"} count={neutral} />
+            <Statistic name={"bad"} count={bad} />
+            <Statistic name={"total"} count={total} />
+            <Statistic name={"average"} count={average} />
+            <Statistic name={"positive"} count={positive} />
+          </table>
         </>
       ) : (
         <>
