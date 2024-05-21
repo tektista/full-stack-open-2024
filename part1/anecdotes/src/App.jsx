@@ -41,6 +41,7 @@ const App = () => {
   ]);
 
   const [selected, setSelected] = useState(0);
+  const [indexOfAnecdoteWithHighestVotes, setIndexOfAnecdoteWithHighestVotes] = useState(0);
 
   const selectAnecdote = () => {
     const randomIndex = Math.floor(Math.random() * anecdotes.length);
@@ -49,26 +50,40 @@ const App = () => {
 
   const incrementAnecdoteVoteCount = () => {
     const indexOfSelectedIndex = selected;
-
     const tempAnecdotes = [...anecdotes];
-
-    const tempAnecdotesToCopy = tempAnecdotes.map( (anecdote, index) => {
+  
+    const tempAnecdotesToCopy = tempAnecdotes.map((anecdote, index) => {
       if (index === indexOfSelectedIndex) {
-        return {...anecdote, voteCount: anecdote.voteCount + 1};
+        return { ...anecdote, voteCount: anecdote.voteCount + 1 };
       }
       return anecdote;
-    })
-
+    });
+  
     setAnecdotes(tempAnecdotesToCopy);
-  }
+  
+    let highestVoteCount = 0;
+    let indexWithHighestVoteCount = 0;
+  
+    tempAnecdotesToCopy.forEach((anecdote, index) => {
+      if (anecdote.voteCount > highestVoteCount) {
+        highestVoteCount = anecdote.voteCount;
+        indexWithHighestVoteCount = index;
+      }
+    });
+  
+    setIndexOfAnecdoteWithHighestVotes(indexWithHighestVoteCount);
+  };
+  
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected].anecdote}</div>
       <div>has {anecdotes[selected].voteCount} votes</div>
       <button onClick={incrementAnecdoteVoteCount}>vote</button>
       <button onClick={selectAnecdote}>next anecdote</button>
-      
+      <h1>Anecdote with most votes</h1>
+      <div>{anecdotes[indexOfAnecdoteWithHighestVotes].anecdote}</div>
     </div>
   );
 };
