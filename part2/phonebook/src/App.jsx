@@ -1,5 +1,53 @@
 import { useState } from "react";
 
+const Filter = ({ filter, onChange }) => {
+  return (
+    <div>
+      filter shown with
+      <input value={filter} onChange={onChange} />
+    </div>
+  );
+};
+
+const PersonForm = ({
+  nameVal,
+  numberVal,
+  nameOnChange,
+  numberOnChange,
+  buttonOnClick,
+}) => {
+  return (
+    <>
+      <div>
+        name: <input value={nameVal} onChange={nameOnChange} />
+      </div>
+      <div>
+        number: <input value={numberVal} onChange={numberOnChange} />
+      </div>
+      <div>
+        <button onClick={buttonOnClick} type="submit">
+          add
+        </button>
+      </div>
+    </>
+  );
+};
+
+const Persons = ({ persons, filter }) => {
+  return (
+    <>
+      {persons.map(
+        (person, index) =>
+          person.name.toLowerCase().includes(filter.toLowerCase()) && (
+            <div key={index}>
+              {person.name} {person.number}
+            </div>
+          )
+      )}
+    </>
+  );
+};
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -51,33 +99,20 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          filter shown with
-          <input value={filter} onChange={handleFilterChange} />
-        </div>
-        <h1>add a new</h1>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button onClick={addPerson} type="submit">
-            add
-          </button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {persons.map(
-        (person, index) =>
-          person.name.toLowerCase().includes(filter.toLowerCase()) && (
-            <div key={index}>
-              {person.name} {person.number}
-            </div>
-          )
-      )}
+
+      <Filter filter={filter} onChange={handleFilterChange} />
+      <h1>add a new</h1>
+
+      <PersonForm
+        nameVal={newName}
+        numberVal={newNumber}
+        nameOnChange={handleNameChange}
+        numberOnChange={handleNumberChange}
+        buttonOnClick={addPerson}
+      />
+
+      <h3>Numbers</h3>
+      <Persons persons={persons} filter={filter}/>
     </div>
   );
 };
