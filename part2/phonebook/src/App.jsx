@@ -15,7 +15,20 @@ const App = () => {
       name: newName,
     };
 
-    setPersons(persons.concat(newPerson));
+    let nameExists = false;
+
+    persons.forEach((person, index) => {
+      if (person.name === newName) {
+        nameExists = true;
+      }
+    });
+
+    if (nameExists === false) {
+      setPersons(persons.concat(newPerson));
+    } else {
+      window.alert(`${newName} is already added to the phonebook`);
+    }
+
     setNewName("");
   };
 
@@ -40,4 +53,4 @@ const App = () => {
   );
 };
 
-export default App
+export default App;
