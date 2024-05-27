@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import axios from 'axios'
+import axios from "axios";
 
 const Filter = ({ filter, onChange }) => {
   return (
     <div>
-      filter shown withƒ
+      filter shown with
       <input value={filter} onChange={onChange} />
     </div>
   );
@@ -91,7 +91,12 @@ const App = () => {
     });
 
     if (nameExists === false) {
-      setPersons(persons.concat(newPerson));
+      
+
+      axios.post("http://localhost:3001/persons", newPerson).then((response) => {
+        console.log(response);
+        setPersons(persons.concat(response.data));
+      });
     } else {
       window.alert(`${newName} is already added to the phonebook`);
     }
