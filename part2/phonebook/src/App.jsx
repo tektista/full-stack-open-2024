@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import personsService from './services/persons'
+import personsService from "./services/persons";
 
 const Filter = ({ filter, onChange }) => {
   return (
@@ -42,7 +42,10 @@ const Persons = ({ persons, filter, onClick }) => {
         (person, index) =>
           person.name.toLowerCase().includes(filter.toLowerCase()) && (
             <div key={index}>
-              {person.name} {person.number} <button onClick={() => onClick(person.id, person.name)}>delete</button>
+              {person.name} {person.number}{" "}
+              <button onClick={() => onClick(person.id, person.name)}>
+                delete
+              </button>
             </div>
           )
       )}
@@ -74,11 +77,11 @@ const App = () => {
   const deletePerson = (id, name) => {
     if (window.confirm(`Delete ${name}?`)) {
       personsService.remove(id).then((response) => {
-        console.log("promise fulfilled")
-        setPersons(persons.filter(person => person.id !== id))
-      })
+        console.log("promise fulfilled");
+        setPersons(persons.filter((person) => person.id !== id));
+      });
     }
-  }
+  };
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
@@ -93,22 +96,35 @@ const App = () => {
     };
 
     let nameExists = false;
+    let nameExistsID;
 
     persons.forEach((person, index) => {
       if (person.name === newName) {
         nameExists = true;
+        nameExistsID = person.id;
       }
     });
 
     if (nameExists === false) {
-      
-
       personsService.create(newPerson).then((response) => {
         console.log(response);
         setPersons(persons.concat(response.data));
       });
     } else {
-      window.alert(`${newName} is already added to the phonebook`);
+      if (
+        window.confirm(
+          `${newName} is already added to the phonebook, replace the old number with a new one?`
+        )
+      ) {
+        personsService.update(nameExistsID, newPerson).then((response) => {
+          console.log(response);
+          setPersons(
+            persons.map((person) =>
+              person.id !== nameExistsID ? person : response.data
+            )
+          );
+        });
+      }
     }
 
     setNewName("");
