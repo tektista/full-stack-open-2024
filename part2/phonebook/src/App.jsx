@@ -58,6 +58,10 @@ const Notification = ({ message }) => {
     return null;
   }
 
+  if (message.includes("Information of")) {
+    return <div className="error">{message}</div>;
+  }
+
   return <div className="success">{message}</div>;
 };
 
@@ -85,10 +89,20 @@ const App = () => {
 
   const deletePerson = (id, name) => {
     if (window.confirm(`Delete ${name}?`)) {
-      personsService.remove(id).then((response) => {
-        console.log("promise fulfilled");
-        setPersons(persons.filter((person) => person.id !== id));
-      });
+      personsService
+        .remove(id)
+        .then((response) => {
+          console.log("promise fulfilled");
+          setPersons(persons.filter((person) => person.id !== id));
+        })
+        .catch((error) => {
+          setErrorMessage(
+            `Information of ${name} has already been removed from server`
+          );
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     }
   };
 
@@ -118,9 +132,7 @@ const App = () => {
       personsService.create(newPerson).then((response) => {
         console.log(response);
         setPersons(persons.concat(response.data));
-        setErrorMessage(
-          `Added ${newName}`
-        );
+        setErrorMessage(`Added ${newName}`);
         setTimeout(() => {
           setErrorMessage(null);
         }, 5000);
