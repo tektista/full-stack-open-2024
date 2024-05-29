@@ -9,7 +9,7 @@ const SearchBar = ({ value, onChange }) => {
   );
 };
 
-const CountryView = ({ countries }) => {
+const CountryView = ({ countries, buttonHandler }) => {
   if (!countries) {
     return null;
   }
@@ -36,7 +36,7 @@ const CountryView = ({ countries }) => {
     return (
       <div>
         {countries.map((country, index) => (
-          <div key={index}>{country.name.common}</div>
+          <div key={index}>{country.name.common} <button onClick={() => buttonHandler(country.name.common)}>show</button></div>
         ))}
       </div>
     );
@@ -62,6 +62,11 @@ const App = () => {
     return filteredCountryList;
   };
 
+  const showCountry = (countryName) => {
+    const country = countries.filter(country => country.name.common === countryName )
+    setCountries(country);
+  }
+
   useEffect(() => {
     axios
       .get("https://studies.cs.helsinki.fi/restcountries/api/all")
@@ -75,7 +80,7 @@ const App = () => {
       <div>
         find countries
         <SearchBar value={searchBarValue} onChange={handleSearchBarChange} />
-        <CountryView countries={countries} />
+        <CountryView countries={countries} buttonHandler={showCountry} />
       </div>
     </>
   );
