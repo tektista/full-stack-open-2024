@@ -9,13 +9,14 @@ const SearchBar = ({ value, onChange }) => {
   );
 };
 
-const CountryView = ({ countries, buttonHandler }) => {
+const CountryView = ({ countries, cityWeather, buttonHandler }) => {
   if (!countries) {
     return null;
   }
 
   if (countries.length === 1) {
     const country = countries[0];
+
     return (
       <div>
         <h1>{country.name.common}</h1>
@@ -23,11 +24,25 @@ const CountryView = ({ countries, buttonHandler }) => {
         <div>area {country.area}</div>
         <h2>languages:</h2>
 
-        {Object.values(country.languages).map((value) => {
-          return <ul>{value}</ul>;
+        {Object.values(country.languages).map((value, index) => {
+          return <ul key={index}>{value}</ul>;
         })}
 
         <img src={country.flags.png} alt="Description of the image" />
+
+        <h2>Weather in {country.capital[0]}</h2>
+        {cityWeather ? (
+          <>
+            <div>temperature {cityWeather.main.temp} °C</div>
+            <img
+              src={`https://openweathermap.org/img/wn/${cityWeather.weather[0].icon}@2x.png`}
+              alt="Description of the image"
+            />
+            <div>wind {cityWeather.wind.speed} m/s</div>
+          </>
+        ) : (
+          <div>Loading weather data...</div>
+        )}
       </div>
     );
   }
@@ -36,7 +51,12 @@ const CountryView = ({ countries, buttonHandler }) => {
     return (
       <div>
         {countries.map((country, index) => (
-          <div key={index}>{country.name.common} <button onClick={() => buttonHandler(country.name.common)}>show</button></div>
+          <div key={index}>
+            {country.name.common}{" "}
+            <button onClick={() => buttonHandler(country.name.common)}>
+              show
+            </button>
+          </div>
         ))}
       </div>
     );
@@ -46,26 +66,26 @@ const CountryView = ({ countries, buttonHandler }) => {
 };
 
 const App = () => {
-  //on search bar change, filter the the countries received from the request note: where to store this
-
   const [searchBarValue, setSearchBarValue] = useState("");
   const [countries, setCountries] = useState(null);
+  const [cityWeather, setCityWeather] = useState(null);
 
   const handleSearchBarChange = (event) => {
     setSearchBarValue(event.target.value);
   };
 
   const getFilteredCountries = (countryList) => {
-    const filteredCountryList = countryList.filter((country) =>
+    return countryList.filter((country) =>
       country.name.common.toLowerCase().includes(searchBarValue.toLowerCase())
     );
-    return filteredCountryList;
   };
 
   const showCountry = (countryName) => {
-    const country = countries.filter(country => country.name.common === countryName )
+    const country = countries.filter(
+      (country) => country.name.common === countryName
+    );
     setCountries(country);
-  }
+  };
 
   useEffect(() => {
     axios
@@ -75,12 +95,31 @@ const App = () => {
       });
   }, [searchBarValue]);
 
+  useEffect(() => {
+    if (countries && countries.length === 1) {
+      axios
+        .get(
+          `https://api.openweathermap.org/data/2.5/weather?q=${
+            countries[0].capital[0]
+          }&appid=${import.meta.env.VITE_OPEN_WEATHER_API_KEY}&units=metric`
+        )
+        .then((response) => {
+          console.log(response.data);
+          setCityWeather(response.data);
+        });
+    }
+  }, [countries]);
+
   return (
     <>
       <div>
         find countries
         <SearchBar value={searchBarValue} onChange={handleSearchBarChange} />
-        <CountryView countries={countries} buttonHandler={showCountry} />
+        <CountryView
+          countries={countries}
+          cityWeather={cityWeather}
+          buttonHandler={showCountry}
+        />
       </div>
     </>
   );
