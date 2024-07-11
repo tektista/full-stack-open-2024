@@ -1,6 +1,7 @@
 import axios from "axios";
-//const baseUrl = "http://localhost:3001/persons";
-const baseUrl = "http://localhost:3000/api";
+//const baseUrl = "http://localhost:3000/api";
+//const baseUrl = "https://phonebook-backend-withered-dew-1073.fly.dev/api";
+const baseUrl = "/api"
 
 const getAll = () => {
   return axios.get(`${baseUrl}/persons`);
