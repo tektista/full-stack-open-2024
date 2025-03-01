@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 
-const Blog = rquire("./models/blog");
+const Blog = require("./models/blog");
 
 app.use(cors());
 app.use(express.json())
